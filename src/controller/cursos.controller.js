@@ -1,45 +1,64 @@
-export const createCursos = async (req, res) => {
-    console.log(req.body)
+import Curso from '../models/Curso'
 
-    // destruir objeto que llega del request
-    const {name, price, category, brand, imgUrl} = req.body
-    res.json({msg: "hola"})
+export const createCurso = async (req, res) => {
+    
+    const { nombre, precio, descripcion, imagen, videoUrl } = req.body
 
-
-    //definir el nuevo curso
-    const newCurso = new newCurso({
-        name,
-        price,
-        category,
-        brand,
-        imgUrl
+    const nuevoCurso = new Curso({
+        nombre,
+        precio,
+        descripcion,
+        imagen,
+        videoUrl
     })
 
-    const cursoSaved = await newCurso.save()
- 
-    res.status(201).json(cursoSaved)
+    const cursoGuardado = await nuevoCurso.save()
+
+    res.status(201).json(cursoGuardado)
 }
 
-export const getCursos = async (req, res) => {
-    const cursos = await Cursos.find()
+export const listarCursos = async (req, res) => {
+    const cursosListados = await Curso.find().sort({updatedAt: -1})
 
-    res.status(200).json(cursos)
-    
+    res.status(200).json(cursosListados)
 }
 
-export const getCursosById = async (req, res) => {
+export const listarCursoById = async (req, res) => {
     console.log(req.params)
-    console.log(req.params.cursoId)
+
+    const cursoListado = await Curso.findById(req.params.cursoId)
+
+    if (cursoListado !== null) res.status(200).json(cursoListado)
+    else res.status(401).json({msg: "Curso no existe"})
+}
+
+export const actCurso = async (req, res) => {
     try {
-        const cursos = await Cursos.findById(req.params.cursoId)
-        console.log(cursos)
-        if (cursos != null){
-            res.status(200).json(cursos)
+        const actCurso = await Curso.findByIdAndUpdate(req.params.cursoId, req.body, {new: true})
+        if (actCurso !== null){
+            res.status(200).json(actCurso)
         } else {
-            res.status(200).json({error: "El producto no existe"})
+            res.status(401).json({error: "El curso no existe"})
         }
 
     } catch (error) {
+        console.log(error)
+        res.status(400).json(error)
+    }
+}
+
+
+export const elimCurso = async (req, res) => {
+    try {
+        const elimCurso = await Curso.findByIdAndDelete(req.params.cursoId)
+        if (elimCurso !== null){
+            res.status(200).json({msg: "Curso Eliminado"})
+        } else {
+            res.status(401).json({error: "El curso no existe"})
+        }
+
+    } catch (error) {
+        console.log(error)
         res.status(400).json(error)
     }
 }

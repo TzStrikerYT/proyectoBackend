@@ -1,13 +1,14 @@
 import { Router } from 'express'
 
-
 const router = Router()
 
-router.post('/', createCursos)
-router.get('/', getCursos)
-router.get('/:productId', getCursosById)
-router.put('/:producyId', updateCursos)
-router.delete('/:productId', deleteCursos)
+import * as cursoController from '../controller/cursos.controller'
+
+router.post('/', cursoController.createCurso)
+router.get('/', cursoController.listarCursos)
+router.get('/:cursoId', cursoController.listarCursoById)
+router.put('/:cursoId', cursoController.actCurso)
+router.delete('/:cursoId', cursoController.elimCurso)
 
 export default router
 
